@@ -74,11 +74,11 @@ export default function NavBar() {
         </button>
 
         <div className="hidden md:flex gap-6">
-          <Link href="/" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero ? "text-gray-800" : "text-white"}`}>
+          <Link href="/about" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero ? "text-gray-800" : "text-white"}`}>
             About
           </Link>
 
-          <Link href="/" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero ? "text-gray-800" : "text-white"}`}>
+          <Link href="/events" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero ? "text-gray-800" : "text-white"}`}>
             Events
           </Link>
         </div>
@@ -92,11 +92,11 @@ export default function NavBar() {
 
       {isOpen && (
         <div className="flex flex-col gap-2 mt-3 md:hidden pr-4">
-          <Link href="/" className={`block text-xl py-2 hover:text-green-700 hover:underline ${!isInHero ? "text-gray-800" : "text-white"}`}>
+          <Link href="/about" className={`block text-xl py-2 hover:text-green-700 hover:underline ${!isInHero ? "text-gray-800" : "text-white"}`}>
             About
           </Link>
 
-          <Link href="/" className={`block text-xl py-2 hover:text-green-700 hover:underline ${!isInHero ? "text-gray-800" : "text-white"}`}>
+          <Link href="/events" className={`block text-xl py-2 hover:text-green-700 hover:underline ${!isInHero ? "text-gray-800" : "text-white"}`}>
             Events
           </Link>
         </div>
