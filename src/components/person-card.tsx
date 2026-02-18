@@ -18,8 +18,8 @@ export default function PersonCard({ name, position, imageUrl }: PersonCardProps
         />
       </div>
       <div className="relative w-1/2 flex flex-col justify-center text-center">
-        <h3 className="text-xl font-semibold text-green-800 group-hover:text-white">{name}</h3>
-        <p className="text-md text-gray-600 group-hover:text-white">{position}</p>
+        <h3 className="text-xl font-semibold text-green-700 group-hover:text-white">{name}</h3>
+        <p className="text-md text-gray-800 group-hover:text-white">{position}</p>
       </div>
     </div>
   );
