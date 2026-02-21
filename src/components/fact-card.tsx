@@ -9,8 +9,8 @@ type FactProps = {
 
 export default function FactCard({ title, description, imageUrl, onLeft }: FactProps) {
   return (
-    <div className={`max-w-4xl mx-auto my-6 flex ${onLeft ? "flex-row" : "flex-row-reverse"}`}>
-      <div className="hidden md:block w-1/3 p-6">
+    <div className={`max-w-4xl mx-auto p-6 flex ${onLeft ? "flex-row" : "flex-row-reverse"} gap-6`}>
+      <div className="hidden md:block w-1/3">
         <div className="relative w-full aspect-1/1">
           <Image
             src={imageUrl}
@@ -20,8 +20,8 @@ export default function FactCard({ title, description, imageUrl, onLeft }: FactP
           />
         </div>
       </div>
-      <div className="w-full md:w-2/3 p-6 pt-9 flex flex-col">
-        <div className={`w-full mx-auto mb-4 flex ${onLeft ? "flex-row" : "flex-row-reverse"} items-center justify-center gap-x-4`}>
+      <div className="w-full md:w-2/3 md:pt-3 flex flex-col">
+        <div className={`w-full mb-6 flex ${onLeft ? "flex-row" : "flex-row-reverse"} items-center justify-center gap-x-4`}>
           <div className="h-2 bg-green-600 rounded flex-[0.25]" />
           <h2 className="text-2xl md:text-3xl font-semibold text-green-700">{title}</h2>
           <div className="h-2 bg-green-600 rounded flex-[1]" />

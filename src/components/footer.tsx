@@ -29,7 +29,7 @@ export default function Footer() {
           {/* Events */}
           <div>
             <h3 className="text-lg font-semibold mb-3">
-              <Link href="/events" className="hover:underline">Events</Link>
+              <Link href="/book" className="hover:underline">Booking</Link>
             </h3>
           </div>
         </div>

@@ -82,8 +82,8 @@ export default function NavBar() {
             About
           </Link>
 
-          <Link href="/events" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
-            Events
+          <Link href="/book" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
+            Book Performance
           </Link>
         </div>
       </div>
@@ -98,8 +98,8 @@ export default function NavBar() {
             About
           </Link>
 
-          <Link href="/events" className={`block text-right text-xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
-            Events
+          <Link href="/book" className={`block text-right text-xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
+            Book Performance
           </Link>
         </div>
       )}
