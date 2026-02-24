@@ -10,7 +10,7 @@ export default function BookPage() {
 
       <Calendar />
 
-      <SectionTitle title="Check Out These Performances" onLeft={false} />
+      <SectionTitle title="See Past Performances" onLeft={false} />
 
       <EventCard
         title="Kolintang Performance 1"
