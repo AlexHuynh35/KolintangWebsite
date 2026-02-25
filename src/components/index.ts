@@ -7,3 +7,4 @@ export { default as PersonCard } from "./person-card";
 export { default as FactCard } from "./fact-card";
 export { default as EventCard } from "./event-card";
 export { default as Calendar } from "./calendar";
+export { default as Form } from "./form";

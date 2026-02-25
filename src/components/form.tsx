@@ -1,0 +1,116 @@
+"use client";
+
+import { useEffect, useState, useRef } from "react";
+import { Calendar } from "@/components";
+import { formatDate } from "@/utils/formatDate";
+import Image from "next/image";
+
+export default function Form() {
+  const [active, setActive] = useState<boolean>(false);
+  const [available, setAvailable] = useState<boolean>(false);
+  const [selected, setSelected] = useState<Date | undefined>();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const handleDateChange = (date: Date | undefined) => {
+    setAvailable(false);
+    setSelected(date);
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setActive(false);
+      }
+    }
+
+    function handleClickInside(event: MouseEvent) {
+      if (wrapperRef.current && wrapperRef.current.contains(event.target as Node)) {
+        setActive(true);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickInside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickInside);
+    };
+  }, []);
+
+  return (
+    <div className="max-w-4xl mx-auto my-6 p-6 gap-6 flex flex-col justify-center items-center rounded-xl shadow-sm bg-white">
+      <div className="w-full flex flex-col justify-center items-center">
+        <h1 className="text-2xl text-green-700 font-bold pb-6">Booking Form</h1>
+
+        <div className="w-full flex justify-center pb-3">
+          <div className="w-9/10 h-1 bg-green-600 rounded" />
+        </div>
+
+        <h1 className="text-2xl text-green-700 font-bold pb-6">Check if your event date is available</h1>
+
+        <div className="grid gap-6 items-center grid-cols-1 md:grid-cols-2 pb-6">
+          <div className="w-full flex flex-row justify-center items-center gap-3">
+            <strong className="text-xl text-green-700">Date: </strong>
+            <div ref={wrapperRef} className="relative gap-3">
+              <input readOnly value={selected ? formatDate(selected) : "Choose Date"} className="text-lg text-black border border-black bg-yellow-100 rounded-xl p-1"></input>
+              {active && (
+                <div className="absolute left-0 right-0 top-0 max-h-54 pt-12 z-10">
+                  <Calendar onDateSubmit={handleDateChange}/>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setAvailable(true)}
+              className="text-xl text-white py-1 px-3 border border-4 bg-green-800 hover:bg-green-700 border-green-900 z-20"
+            >
+              &gt;
+            </button>
+          </div>
+          <div className="w-full flex flex-row justify-center items-center gap-3">
+            <strong className="text-xl text-green-700">Availability: </strong>
+            <Image
+              src={available ? "/media/icons/check.svg" : "/media/icons/cross.svg"}
+              alt={available ? "Date Available" : "Date Not Available"}
+              width={20}
+              height={20}
+              className="object-cover rounded-full"
+            />
+          </div>
+        </div>
+
+        <div className="w-full flex justify-center pt-6 pb-3">
+          <div className="w-9/10 h-1 bg-green-600 rounded" />
+        </div>
+
+        <h1 className="text-2xl text-green-700 font-bold pb-6">Enter your info below</h1>
+
+        <div className="grid gap-6 items-center grid-cols-1 md:grid-cols-2 pb-6">
+          <div className="">
+            <strong className="text-xl text-green-700">Name: </strong>
+            <input className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"></input>
+          </div>
+          <div className="">
+            <strong className="text-xl text-green-700">Email: </strong>
+            <input className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"></input>
+          </div>
+          <div className="">
+            <strong className="text-xl text-green-700">Phone: </strong>
+            <input className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"></input>
+          </div>
+          <div className="">
+            <strong className="text-xl text-green-700">Location: </strong>
+            <input className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"></input>
+          </div>
+        </div>
+
+        <button
+          disabled={!available}
+          className={`text-xl text-white px-6 py-3 border border-4 ${!available ? "bg-gray-600 border-gray-700" : "bg-green-800 hover:bg-green-700 border-green-900"}`}
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  );
+}
