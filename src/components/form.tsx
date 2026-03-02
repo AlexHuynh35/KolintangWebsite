@@ -41,17 +41,17 @@ export default function Form() {
   return (
     <div className="max-w-4xl mx-auto my-6 p-6 gap-6 flex flex-col justify-center items-center rounded-xl shadow-sm bg-white">
       <div className="w-full flex flex-col justify-center items-center">
-        <h1 className="text-2xl text-green-700 font-bold pb-6">Booking Form</h1>
+        <h1 className="text-2xl text-accent-medium font-bold pb-6">Booking Form</h1>
 
         <div className="w-full flex justify-center pb-3">
-          <div className="w-9/10 h-1 bg-green-600 rounded" />
+          <div className="w-9/10 h-1 bg-accent-light rounded" />
         </div>
 
-        <h1 className="text-2xl text-green-700 font-bold pb-6">Check if your event date is available</h1>
+        <h1 className="text-2xl text-accent-medium font-bold pb-6">Check if your event date is available</h1>
 
         <div className="grid gap-6 items-center grid-cols-1 md:grid-cols-2 pb-6">
           <div className="w-full flex flex-row justify-center items-center gap-3">
-            <strong className="text-xl text-green-700">Date: </strong>
+            <strong className="text-xl text-accent-medium">Date: </strong>
             <div ref={wrapperRef} className="relative gap-3">
               <input readOnly value={selected ? formatDate(selected) : "Choose Date"} className="text-lg text-black border border-black bg-yellow-100 rounded-xl p-1"></input>
               {active && (
@@ -62,13 +62,13 @@ export default function Form() {
             </div>
             <button
               onClick={() => setAvailable(true)}
-              className="text-xl text-white py-1 px-3 border border-4 bg-green-800 hover:bg-green-700 border-green-900 z-20"
+              className="text-xl text-white py-1 px-3 border border-4 bg-accent-dark hover:bg-accent-medium border-accent-intense z-20"
             >
               &gt;
             </button>
           </div>
           <div className="w-full flex flex-row justify-center items-center gap-3">
-            <strong className="text-xl text-green-700">Availability: </strong>
+            <strong className="text-xl text-accent-medium">Availability: </strong>
             <Image
               src={available ? "/media/icons/check.svg" : "/media/icons/cross.svg"}
               alt={available ? "Date Available" : "Date Not Available"}
@@ -80,33 +80,33 @@ export default function Form() {
         </div>
 
         <div className="w-full flex justify-center pt-6 pb-3">
-          <div className="w-9/10 h-1 bg-green-600 rounded" />
+          <div className="w-9/10 h-1 bg-accent-light rounded" />
         </div>
 
-        <h1 className="text-2xl text-green-700 font-bold pb-6">Enter your info below</h1>
+        <h1 className="text-2xl text-accent-medium font-bold pb-6">Enter your info below</h1>
 
         <div className="grid gap-6 items-center grid-cols-1 md:grid-cols-2 pb-6">
           <div className="">
-            <strong className="text-xl text-green-700">Name: </strong>
+            <strong className="text-xl text-accent-medium">Name: </strong>
             <input className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"></input>
           </div>
           <div className="">
-            <strong className="text-xl text-green-700">Email: </strong>
+            <strong className="text-xl text-accent-medium">Email: </strong>
             <input className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"></input>
           </div>
           <div className="">
-            <strong className="text-xl text-green-700">Phone: </strong>
+            <strong className="text-xl text-accent-medium">Phone: </strong>
             <input className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"></input>
           </div>
           <div className="">
-            <strong className="text-xl text-green-700">Location: </strong>
+            <strong className="text-xl text-accent-medium">Location: </strong>
             <input className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"></input>
           </div>
         </div>
 
         <button
           disabled={!available}
-          className={`text-xl text-white px-6 py-3 border border-4 ${!available ? "bg-gray-600 border-gray-700" : "bg-green-800 hover:bg-green-700 border-green-900"}`}
+          className={`text-xl text-white px-6 py-3 border border-4 ${!available ? "bg-gray-600 border-gray-700" : "bg-accent-dark hover:bg-accent-medium border-accent-intense"}`}
         >
           Submit
         </button>

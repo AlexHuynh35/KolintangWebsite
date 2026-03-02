@@ -10,7 +10,7 @@ type FactProps = {
 export default function FactCard({ title, description, imageUrl, onLeft }: FactProps) {
   return (
     <div className={`max-w-4xl mx-auto p-6 flex ${onLeft ? "flex-row" : "flex-row-reverse"} gap-6`}>
-      <div className="hidden md:block w-1/3">
+      <div className="hidden md:block w-1/4">
         <div className="relative w-full aspect-1/1">
           <Image
             src={imageUrl}
@@ -20,13 +20,13 @@ export default function FactCard({ title, description, imageUrl, onLeft }: FactP
           />
         </div>
       </div>
-      <div className="w-full md:w-2/3 md:pt-3 flex flex-col">
+      <div className="w-full md:w-3/4 md:pt-3 flex flex-col">
         <div className={`w-full mb-6 flex ${onLeft ? "flex-row" : "flex-row-reverse"} items-center justify-center gap-x-4`}>
-          <div className="h-2 bg-green-600 rounded flex-[0.25]" />
-          <h2 className="text-2xl md:text-3xl font-semibold text-green-700">{title}</h2>
-          <div className="h-2 bg-green-600 rounded flex-[1]" />
+          <div className="h-2 bg-accent-light rounded flex-[0.25]" />
+          <h2 className="text-2xl md:text-3xl font-semibold text-accent-medium">{title}</h2>
+          <div className="h-2 bg-accent-light rounded flex-[0.25]" />
         </div>
-        <blockquote className={`text-xl text-balance ${onLeft ? "text-left" : "text-right"} italic text-green-700`}>
+        <blockquote className={`text-xl text-pretty ${onLeft ? "text-left" : "text-right"} italic text-accent-medium`}>
           {description}
         </blockquote>
       </div>

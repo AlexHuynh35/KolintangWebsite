@@ -8,7 +8,7 @@ type PersonCardProps = {
 
 export default function PersonCard({ name, position, imageUrl }: PersonCardProps) {
   return (
-    <div className="relative group aspect-[5/3] flex flex-row items-center rounded-lg p-4 gap-4 hover:p-0 hover:pr-4 shadow bg-white hover:bg-green-800 hover:scale-105">
+    <div className="relative group aspect-[5/3] flex flex-row items-center rounded-lg p-4 gap-4 hover:p-0 hover:pr-4 shadow bg-white hover:bg-accent-dark hover:scale-105">
       <div className="relative w-1/2 aspect-[3/4]">
         <Image
           src={imageUrl}
@@ -18,7 +18,7 @@ export default function PersonCard({ name, position, imageUrl }: PersonCardProps
         />
       </div>
       <div className="relative w-1/2 flex flex-col justify-center text-center">
-        <h3 className="text-xl font-semibold text-green-700 group-hover:text-white">{name}</h3>
+        <h3 className="text-xl font-semibold text-accent-medium group-hover:text-white">{name}</h3>
         <p className="text-md text-gray-800 group-hover:text-white">{position}</p>
       </div>
     </div>

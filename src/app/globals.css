@@ -3,13 +3,19 @@
 :root {
   --background: #ffffff;
   --foreground: #000000;
+  --accent-light: #16A34A;
+  --accent-medium: #15803D;
+  --accent-dark: #166534;
+  --accent-intense: #14532D;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent-light: var(--accent-light);
+  --color-accent-medium: var(--accent-medium);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-intense: var(--accent-intense);
 }
 
 @media (prefers-color-scheme: dark) {

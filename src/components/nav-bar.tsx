@@ -74,15 +74,15 @@ export default function NavBar() {
         </button>
 
         <div className="hidden md:flex gap-6">
-          <Link href="/" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
+          <Link href="/" className={`text-xl md:text-2xl py-2 hover:text-accent-medium hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
             Home
           </Link>
 
-          <Link href="/about" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
+          <Link href="/about" className={`text-xl md:text-2xl py-2 hover:text-accent-medium hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
             About
           </Link>
 
-          <Link href="/book" className={`text-xl md:text-2xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
+          <Link href="/book" className={`text-xl md:text-2xl py-2 hover:text-accent-medium hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
             Book Performance
           </Link>
         </div>
@@ -90,15 +90,15 @@ export default function NavBar() {
 
       {isOpen && (
         <div className="flex flex-col justify-end gap-2 mt-3 md:hidden pr-4">
-          <Link href="/" className={`block text-right text-xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
+          <Link href="/" className={`block text-right text-xl py-2 hover:text-accent-medium hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
             Home
           </Link>
 
-          <Link href="/about" className={`block text-right text-xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
+          <Link href="/about" className={`block text-right text-xl py-2 hover:text-accent-medium hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
             About
           </Link>
 
-          <Link href="/book" className={`block text-right text-xl py-2 hover:text-green-700 hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
+          <Link href="/book" className={`block text-right text-xl py-2 hover:text-accent-medium hover:underline ${!isInHero || isOpen ? "text-gray-800" : "text-white"}`}>
             Book Performance
           </Link>
         </div>

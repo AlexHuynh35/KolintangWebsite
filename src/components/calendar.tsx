@@ -12,7 +12,7 @@ export default function Calendar({ onDateSubmit }: CalendarProps) {
   //const defaultClassNames = getDefaultClassNames();
 
   return (
-    <div className="w-fit bg-green-800 p-3 rounded-xl">
+    <div className="w-fit bg-accent-dark p-3 rounded-xl">
       <DayPicker
         fixedWeeks
         showOutsideDays
@@ -33,7 +33,7 @@ export default function Calendar({ onDateSubmit }: CalendarProps) {
           //caption_before_exit: "",
           //caption_label: "",
           chevron: `fill-white hover:fill-gray-200`,
-          day: `w-5 h-5 rounded-xl hover:text-green-700 hover:bg-gray-100`,
+          day: `w-5 h-5 rounded-xl hover:text-accent-medium hover:bg-gray-100`,
           //day_button: "",
           //disabled: "",
           //dropdown: "",
@@ -53,7 +53,7 @@ export default function Calendar({ onDateSubmit }: CalendarProps) {
           //range_middle: "",
           //range_start: "",
           //root: "",
-          selected: "text-green-700 bg-gray-200 hover:bg-gray-300",
+          selected: "text-accent-medium bg-gray-200 hover:bg-gray-300",
           today: `text-black`,
           //week: "",
           //week_number: "",

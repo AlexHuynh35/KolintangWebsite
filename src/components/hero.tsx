@@ -13,11 +13,11 @@ export default function Hero() {
           className="object-cover object-center"
           priority
         />
-        <div className="absolute -bottom-20 w-80 md:w-160 h-30 flex items-center justify-center text-center text-3xl md:text-5xl text-white font-bold bg-green-800 rounded-r-full z-20">Cita Lomendehe</div>
+        <div className="absolute -bottom-20 w-80 md:w-160 h-30 flex items-center justify-center text-center text-3xl md:text-5xl text-white font-bold bg-accent-dark rounded-r-full z-20">Cita Lomendehe</div>
       </div>
       <div className="relative h-20 bg-black">
-        <div className="absolute inset-0 bg-green-800 z-10 [clip-path:polygon(0%_0%,69%_0%,64%_100%,0%_100%)] [transform:translateZ(0)]" />
-        <div className="absolute inset-0 bg-green-600 z-10 [clip-path:polygon(71%_0%,100%_0%,100%_100%,66%_100%)] [transform:translateZ(0)]" />
+        <div className="absolute inset-0 bg-accent-dark z-10 [clip-path:polygon(0%_0%,69%_0%,64%_100%,0%_100%)] [transform:translateZ(0)]" />
+        <div className="absolute inset-0 bg-accent-light z-10 [clip-path:polygon(71%_0%,100%_0%,100%_100%,66%_100%)] [transform:translateZ(0)]" />
       </div>
     </div>
   );
