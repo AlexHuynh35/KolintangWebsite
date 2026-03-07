@@ -3,17 +3,30 @@
 import { useEffect, useState, useRef } from "react";
 import { Calendar } from "@/components";
 import { formatDate } from "@/utils/formatDate";
+import { checkDate } from "@/utils/api";
 import Image from "next/image";
 
 export default function Form() {
   const [active, setActive] = useState<boolean>(false);
   const [available, setAvailable] = useState<boolean>(false);
   const [selected, setSelected] = useState<Date | undefined>();
+  const [dateLoading, setDateLoading] = useState<boolean>(true);
+  const [dateError, setDateError] = useState<string | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleDateChange = (date: Date | undefined) => {
     setAvailable(false);
     setSelected(date);
+  }
+
+  const submitDate = (date: Date) => {
+    checkDate(date).then((data) => {
+      setAvailable(data.available);
+      setDateLoading(false);
+    }).catch((err) => {
+      setDateError(err.message);
+      setDateLoading(false);
+    });
   }
 
   useEffect(() => {
@@ -56,12 +69,12 @@ export default function Form() {
               <input readOnly value={selected ? formatDate(selected) : "Choose Date"} className="text-lg text-black border border-black bg-yellow-100 rounded-xl p-1"></input>
               {active && (
                 <div className="absolute left-0 right-0 top-0 max-h-54 pt-12 z-10">
-                  <Calendar onDateSubmit={handleDateChange}/>
+                  <Calendar onDateSubmit={handleDateChange} />
                 </div>
               )}
             </div>
             <button
-              onClick={() => setAvailable(true)}
+              onClick={() => submitDate(selected ? selected : new Date())}
               className="text-xl text-white py-1 px-3 border border-4 bg-accent-dark hover:bg-accent-medium border-accent-intense z-20"
             >
               &gt;

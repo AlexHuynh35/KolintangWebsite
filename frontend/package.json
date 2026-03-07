@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"npm run flask\"",
+    "flask": "cd ../backend && python3 app.py",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "concurrently": "^9.2.1",
     "date-fns": "^4.1.0",
     "next": "16.1.6",
     "react": "19.2.3",
