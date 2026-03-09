@@ -20,5 +20,21 @@ def check_date():
         "available": available
     })
 
+@app.route("/submit_form", methods=["POST"])
+def submit_form():
+    data = request.get_json()
+    name = data["name"]
+    email = data["email"]
+    phone = data["phone"]
+    date = data["date"]
+    location = data["location"]
+
+    submitted = True
+
+    return jsonify({
+        "submitted": submitted,
+        "name": name
+    })
+
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
