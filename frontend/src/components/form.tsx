@@ -11,7 +11,10 @@ export interface BookingRequest {
   email: string
   phone: string
   date: Date
-  location: string
+  venue: string
+  city: string
+  state: string
+  message: string
 }
 
 export default function Form() {
@@ -27,7 +30,10 @@ export default function Form() {
     email: "",
     phone: "",
     date: new Date(),
-    location: ""
+    venue: "",
+    city: "",
+    state: "",
+    message: ""
   })
   const [formLoading, setFormLoading] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -65,7 +71,7 @@ export default function Form() {
   function submitFormData(form: BookingRequest) {
     setFormLoading(true);
     submitForm(form).then((data) => {
-      setSubmitted(true);
+      setSubmitted(data.submitted);
       setName(data.name);
       setFormLoading(false);
     }).catch((err) => {
@@ -145,43 +151,79 @@ export default function Form() {
 
           <h1 className="text-2xl text-accent-medium font-bold pb-6">Enter your info below</h1>
 
-          <div className="grid gap-6 items-center grid-cols-1 md:grid-cols-2 pb-6">
-            <div className="">
-              <strong className="text-xl text-accent-medium">Name: </strong>
+          <div className="w-full grid gap-6 grid-cols-1 md:grid-cols-2 pb-6">
+            <div className="flex flex-row">
+              <strong className="text-xl text-accent-medium py-1">Name: </strong>
               <input
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                className="w-full h-fit text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
               ></input>
             </div>
-            <div className="">
-              <strong className="text-xl text-accent-medium">Email: </strong>
+            <div className="flex flex-row">
+              <strong className="text-xl text-accent-medium py-1">Email: </strong>
               <input
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                className="w-full h-fit text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
               ></input>
             </div>
-            <div className="">
-              <strong className="text-xl text-accent-medium">Phone: </strong>
+            <div className="flex flex-row">
+              <strong className="text-xl text-accent-medium py-1">Phone: </strong>
               <input
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                className="w-full h-fit text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
               ></input>
             </div>
-            <div className="">
-              <strong className="text-xl text-accent-medium">Location: </strong>
-              <input
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
-              ></input>
+            <div className="flex flex-col md:col-span-2">
+              <strong className="text-xl text-accent-medium py-1">Location: </strong>
+              <div className="flex flex-col gap-3 mt-3 ml-3">
+                <div className="flex flex-row">
+                  <strong className="text-md text-accent-medium py-1">Venue: </strong>
+                  <input
+                    name="venue"
+                    value={formData.venue}
+                    onChange={handleChange}
+                    className="w-full h-fit text-sm text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                  ></input>
+                </div>
+                <div className="flex flex-row">
+                  <strong className="text-md text-accent-medium py-1">City: </strong>
+                  <input
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    className="w-full h-fit text-sm text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                  ></input>
+                  <strong className="text-md text-accent-medium py-1 ml-3">State: </strong>
+                  <input
+                    name="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    className="w-full h-fit text-sm text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                  ></input>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div className="w-full flex justify-center pb-3">
+            <div className="w-9/10 h-1 bg-accent-light rounded" />
+          </div>
+
+          <h1 className="text-2xl text-accent-medium font-bold pb-6">Anything we should know about your event?</h1>
+
+          <div className="w-full pb-6">
+            <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              className="w-full h-fit text-lg text-black border border-black bg-yellow-100 rounded-xl p-1"
+            ></textarea>
           </div>
 
           <button
@@ -191,6 +233,10 @@ export default function Form() {
           >
             Submit
           </button>
+
+          {formError && (
+            <h1 className="text-xl text-red-500 font-bold pb-6">{formError}</h1>
+          )}
         </div>
       ) : (
         <div className="w-full flex flex-col justify-center items-center">

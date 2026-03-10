@@ -27,8 +27,11 @@ export async function submitForm(form: BookingRequest) {
       date: form.date.toISOString()
     })
   });
+  
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error("Submission Failed, Please Try Again!");
+    throw new Error(data.error || "Submission Failed, Please Try Again!");
   }
-  return response.json();
+  return data;
 }
