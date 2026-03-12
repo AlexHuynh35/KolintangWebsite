@@ -1,6 +1,8 @@
 import psycopg2
+import resend
 import utils.database as database
 import utils.validation as validation
+from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
@@ -15,6 +17,10 @@ app.config["DBUSER"] = os.getenv("DBUSER")
 app.config["DBPASS"] = os.getenv("DBPASS")
 app.config["DBHOST"] = os.getenv("DBHOST")
 app.config["DBPORT"] = os.getenv("DBPORT")
+
+resend.api_key = os.getenv("RESENDAPIKEY")
+app.config["DOMAINEMAIL"] = os.getenv("DOMAINEMAIL")
+app.config["OWNEREMAIL"] = os.getenv("OWNEREMAIL")
 
 @app.route("/test_app")
 def test_app():
@@ -87,6 +93,44 @@ def submit_form():
         return jsonify({
             "error": "Your request is pending, please be patient"
         }), 400
+
+    date_obj = datetime.fromisoformat(date)
+    readable_date = date_obj.strftime("%A, %B %d, %Y")
+
+    owner_params: resend.Emails.SendParams = {
+        "from": app.config["DOMAINEMAIL"],
+        "to": app.config["OWNEREMAIL"],
+        "subject": "New Booking Request",
+        "html": f"""
+            <p><strong>Name: </strong>{name}</p>
+            <p><strong>Email: </strong>{email}</p>
+            <p><strong>Phone: </strong>{phone}</p>
+            <p><strong>Date: </strong>{readable_date}</p>
+            <p><strong>Venue: </strong>{venue}</p>
+            <p><strong>City: </strong>{city}</p>
+            <p><strong>State: </strong>{state}</p>
+
+            <p><strong>Message: </strong>{message}</p>
+        """
+    }
+    r = resend.Emails.send(owner_params)
+
+    recipient_params: resend.Emails.SendParams = {
+        "from": app.config["DOMAINEMAIL"],
+        "to": [email],
+        "subject": "We Received Your Booking Request",
+        "html": f"""
+            <p>Hi {name},</p>
+
+            <p>Thanks for submitting a booking request for <strong>{readable_date}</strong>.</p>
+
+            <p>We'll contact you soon to confirm the details.</p>
+
+            <p>Best,</p>
+            <p>Cita Lomendehe</p>
+        """
+    }
+    r = resend.Emails.send(recipient_params)
 
     # """
     cursor.close()
