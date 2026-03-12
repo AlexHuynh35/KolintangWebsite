@@ -1,5 +1,6 @@
 import psycopg2
 import utils.database as database
+import utils.validation as validation
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
@@ -50,12 +51,33 @@ def submit_form():
     connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
     cursor = connection.cursor()
 
+    all_fields_filled = name != "" and email != "" and phone != "" and date != "" and venue != "" and city != "" and state != ""
+    if not all_fields_filled:
+        connection.close()
+        return jsonify({
+            "error": "Please make sure to fill out all required fields"
+        }), 400
+
+    email_valid = validation.validate_email(email)
+    if not email_valid:
+        connection.close()
+        return jsonify({
+            "error": "Email address is not valid, please enter a valid email address"
+        }), 400
+
+    phone_valid = validation.validate_phone(phone)
+    if not phone_valid:
+        connection.close()
+        return jsonify({
+            "error": "Phone number is not valid, please enter a valid phone number"
+        }), 400
+
     date_available = database.check_request_date(cursor, date)
     if not date_available:
         cursor.close()
         connection.close()
         return jsonify({
-            "error": "Date is already booked"
+            "error": "Date is already booked, please pick a different date"
         }), 400
 
     no_duplicate = database.check_request_contact(cursor, email, phone)
@@ -63,8 +85,16 @@ def submit_form():
         cursor.close()
         connection.close()
         return jsonify({
-            "error": "Your request is pending"
+            "error": "Your request is pending, please be patient"
         }), 400
+
+    # """
+    cursor.close()
+    connection.close()
+    return jsonify({
+        "error": "Submission failed, please try again"
+    }), 400
+    # """
 
     submitted = database.insert_request(cursor, name, email, phone, date, venue, city, state, message)
     if submitted:
@@ -79,7 +109,7 @@ def submit_form():
         cursor.close()
         connection.close()
         return jsonify({
-            "error": "Please try again"
+            "error": "Submission failed, please try again"
         }), 400
 
 if __name__ == "__main__":

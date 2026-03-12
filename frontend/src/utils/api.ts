@@ -11,7 +11,7 @@ export async function checkDate(date: Date) {
     })
   });
   if (!response.ok) {
-    throw new Error("Submission Failed, Please Try Again!");
+    throw new Error("Submission failed, please try again");
   }
   return response.json();
 }
@@ -31,7 +31,7 @@ export async function submitForm(form: BookingRequest) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Submission Failed, Please Try Again!");
+    throw new Error(data.error || "Submission failed, please try again");
   }
   return data;
 }
