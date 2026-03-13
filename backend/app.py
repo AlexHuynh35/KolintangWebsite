@@ -39,7 +39,7 @@ def check_date():
     cursor.close()
     connection.close()
     return jsonify({
-        "available": available
+        "success": available
     })
 
 @app.route("/submit_form", methods=["POST"])
@@ -146,7 +146,7 @@ def submit_form():
         cursor.close()
         connection.close()
         return jsonify({
-            "submitted": submitted,
+            "success": submitted,
             "name": name
         })
     else:
@@ -155,6 +155,16 @@ def submit_form():
         return jsonify({
             "error": "Submission failed, please try again"
         }), 400
+
+@app.route("/submit_login", methods=["POST"])
+def submit_login():
+    data = request.get_json()
+    email = data["email"]
+    password = data["password"]
+
+    return jsonify({
+        "error": "Submission failed, please try again"
+    }), 400
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)

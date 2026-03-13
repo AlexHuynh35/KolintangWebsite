@@ -66,7 +66,7 @@ export default function Form() {
   function submitDate(date: Date) {
     setDateLoading(true);
     checkDate(date).then((data) => {
-      setAvailable(data.available);
+      setAvailable(data.success);
       setFormData(prev => ({
         ...prev,
         date: date
@@ -135,7 +135,7 @@ export default function Form() {
     setFormLoading(true);
 
     submitForm(formData).then((data) => {
-      setSubmitted(data.submitted);
+      setSubmitted(data.success);
       setName(data.name);
       setFormLoading(false);
     }).catch((err) => {
@@ -194,7 +194,7 @@ export default function Form() {
                   type="button"
                   disabled={dateLoading}
                   onClick={() => submitDate(selectedDate ? selectedDate : new Date())}
-                  className="text-xl text-white py-1 px-3 border border-4 bg-accent-dark hover:bg-accent-medium border-accent-intense z-20"
+                  className={`text-xl text-white py-1 px-3 border border-4 ${dateLoading ? "bg-gray-600 border-gray-700" : "bg-accent-dark hover:bg-accent-medium border-accent-intense"}`}
                 >
                   &gt;
                 </button>
@@ -421,7 +421,7 @@ export default function Form() {
             <button
               type="submit"
               disabled={!available || formLoading}
-              className={`text-xl text-white px-6 py-3 border border-4 ${!available ? "bg-gray-600 border-gray-700" : "bg-accent-dark hover:bg-accent-medium border-accent-intense"}`}
+              className={`text-xl text-white px-6 py-3 border border-4 ${!available || formLoading ? "bg-gray-600 border-gray-700" : "bg-accent-dark hover:bg-accent-medium border-accent-intense"}`}
             >
               Submit
             </button>
