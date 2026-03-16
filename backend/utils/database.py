@@ -1,4 +1,5 @@
 import psycopg2
+import bcrypt
 
 def get_database(name, user, password, host, port):
     return psycopg2.connect(
@@ -34,3 +35,13 @@ def check_request_contact(cursor, email, phone):
     )
     requests = cursor.fetchall()
     return len(requests) == 0
+
+def check_login(cursor, email, password):
+    cursor.execute(
+        """SELECT * FROM admins WHERE email = %s;""",
+        (email,)
+    )
+    admin = cursor.fetchall()
+    if len(admin) != 0 and bcrypt.checkpw(password.encode(), admin[0][2].encode()):
+        return True
+    return False

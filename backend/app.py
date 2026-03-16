@@ -162,8 +162,16 @@ def submit_login():
     email = data["email"]
     password = data["password"]
 
+    connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
+    cursor = connection.cursor()
+
+    if database.check_login(cursor, email, password):
+        return jsonify({
+            "success": True
+        })
+
     return jsonify({
-        "error": "Submission failed, please try again"
+        "error": "Email or password is incorrect, please try again"
     }), 400
 
 if __name__ == "__main__":
