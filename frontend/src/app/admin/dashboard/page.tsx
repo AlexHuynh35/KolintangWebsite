@@ -1,11 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import { RequestCard } from "@/components";
 import { placeholder, Request } from "@/data/request";
+import { checkLogin } from "@/utils/api";
 
 export default function DashboardPage() {
-  const [requests, setRequests] = useState<Request[]>(placeholder);
+  const [requests, setRequests] = useState<Request[]>([]);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    checkLogin().then((data) => {
+      if (data.success)
+      {
+        setRequests(placeholder);
+      }
+    }).catch(() => {
+      router.push("/admin/login");
+    });
+  }, [])
 
   return (
     <section className="py-6 bg-gray-100">

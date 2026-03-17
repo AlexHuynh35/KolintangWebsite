@@ -2,15 +2,21 @@ import psycopg2
 import resend
 import utils.database as database
 import utils.validation as validation
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_login import LoginManager, login_required, current_user, login_user, logout_user
+from utils.user import User
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
-CORS(app)
+
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=1)
+
+CORS(app, supports_credentials=True)
 
 app.config["DBNAME"] = os.getenv("DBNAME")
 app.config["DBUSER"] = os.getenv("DBUSER")
@@ -21,6 +27,26 @@ app.config["DBPORT"] = os.getenv("DBPORT")
 resend.api_key = os.getenv("RESENDAPIKEY")
 app.config["DOMAINEMAIL"] = os.getenv("DOMAINEMAIL")
 app.config["OWNEREMAIL"] = os.getenv("OWNEREMAIL")
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT id, email FROM admins WHERE id = %s",
+        (user_id,)
+    )
+
+    user = cursor.fetchone()
+
+    if user:
+        return User(user[0], user[1])
+
+    return None
 
 @app.route("/test_app")
 def test_app():
@@ -165,14 +191,57 @@ def submit_login():
     connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
     cursor = connection.cursor()
 
-    if database.check_login(cursor, email, password):
+    user = database.check_login(cursor, email, password)
+    if user:
+        user_obj = User(user[0], user[1])
+        login_user(user_obj)
+        connection.commit()
+        cursor.close()
+        connection.close()
         return jsonify({
             "success": True
         })
+    else:
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({
+            "error": "Email or password is incorrect, please try again"
+        }), 400
+
+@app.route("/check_login", methods=["GET"])
+def check_login():
+    if current_user.is_authenticated:
+        return jsonify({
+            "success": True,
+            "email": current_user.email
+        })
 
     return jsonify({
-        "error": "Email or password is incorrect, please try again"
-    }), 400
+        "error": "Please log in"
+    }), 401
+
+@app.route("/get_bookings", methods=["GET"])
+@login_required
+def get_bookings():
+    connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM booking_requests")
+    rows = cursor.fetchall()
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return jsonify(rows)
+
+@app.route("/logout", methods=["POST"])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({
+        "success": True,
+    })
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)

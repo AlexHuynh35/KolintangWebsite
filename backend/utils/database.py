@@ -41,7 +41,8 @@ def check_login(cursor, email, password):
         """SELECT * FROM admins WHERE email = %s;""",
         (email,)
     )
-    admin = cursor.fetchall()
-    if len(admin) != 0 and bcrypt.checkpw(password.encode(), admin[0][2].encode()):
-        return True
-    return False
+    admin = cursor.fetchone()
+    if admin:
+        if bcrypt.checkpw(password.encode(), admin[2].encode()):
+            return admin
+    return None

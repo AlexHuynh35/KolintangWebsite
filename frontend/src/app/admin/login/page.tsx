@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import { submitLogin } from "@/utils/api";
 import { validateEmail } from "@/utils/validation";
 
@@ -11,6 +12,8 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   function handleEmailChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const value = e.target.value
@@ -41,6 +44,9 @@ export default function LoginPage() {
     submitLogin(email, password).then((data) => {
       setPassword("");
       setLoading(false);
+      if (data.success) {
+        router.push("/admin/dashboard");
+      }
     }).catch((err) => {
       setError(err.message);
       setPassword("");
