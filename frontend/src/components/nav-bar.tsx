@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function NavBar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [visible, setVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [isTouchingHero, setIsTouchingHero] = useState(true);
-  const [isInHero, setIsInHero] = useState(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
+  const [isTouchingHero, setIsTouchingHero] = useState<boolean>(true);
+  const [isInHero, setIsInHero] = useState<boolean>(true);
 
   useEffect(() => {
     const hero = document.getElementById("hero");
@@ -48,9 +48,9 @@ export default function NavBar() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY && currentScrollY > 0) {
-        setVisible(false);
+        setIsVisible(false);
       } else {
-        setVisible(true);
+        setIsVisible(true);
       }
       setLastScrollY(currentScrollY);
     };
@@ -62,7 +62,7 @@ export default function NavBar() {
 
   return (
     <nav className={`fixed px-4 py-4 inset-x-0 top-0 z-50
-      transition-transform duration-100 ease-in-out ${isTouchingHero || visible ? "translate-y-0" : "-translate-y-full"}
+      transition-transform duration-100 ease-in-out ${isTouchingHero || isVisible ? "translate-y-0" : "-translate-y-full"}
       transition-colors duration-100 ease-in-out ${!isInHero || isOpen ? "bg-white border-b border-gray-200 shadow-sm" : "bg-transparent"}
     `}>
       <div className="max-w-8xl md:pr-6 mx-auto flex justify-end items-center">

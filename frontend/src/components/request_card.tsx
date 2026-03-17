@@ -10,14 +10,14 @@ type RequestCardProps = {
 
 export default function RequestCard({ request }: RequestCardProps) {
   const pending = request.status == "pending";
-  const [open, setOpen] = useState<boolean>(pending);
+  const [isOpen, setIsOpen] = useState<boolean>(pending);
   const statusColorDark = request.status == "pending" ? "bg-yellow-200" : request.status == "confirmed" ? "bg-green-200" : "bg-red-200";
   const statusColorLight = request.status == "pending" ? "bg-yellow-100" : request.status == "confirmed" ? "bg-green-100" : "bg-red-100";
 
   return (
     <div className="w-full mx-auto flex flex-col items-center rounded-xl shadow">
       <div
-        onClick={() => setOpen(!open)}
+        onClick={() => setIsOpen(!open)}
         className={`w-full flex flex-row gap-3 p-4 rounded-t-xl ${!open && "rounded-b-xl"} ${statusColorDark}`}
       >
         <div className="w-1/2 flex justify-left items-center">
@@ -36,7 +36,7 @@ export default function RequestCard({ request }: RequestCardProps) {
           Deny
         </button>
       </div>
-      {open && (
+      {isOpen && (
         <div className={`w-full flex flex-row gap-3 p-4 rounded-b-xl grid grid-cols-2 ${statusColorLight}`}>
           <p className="text-gray-800"><strong>Email:</strong> {request.email}</p>
           <p className="text-gray-800"><strong>Phone:</strong> {request.phone}</p>

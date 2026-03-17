@@ -71,6 +71,20 @@ export async function checkLogin() {
   return data;
 }
 
+export async function submitLogout() {
+  const response = await fetch("/api/submit_logout", {
+    method: "POST",
+    credentials: "include"
+  })
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Submission failed, please try again");
+  }
+  return data;
+}
+
 export async function getBookings() {
   const response = await fetch("/api/get_bookings", {
     method: "GET",

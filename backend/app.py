@@ -18,22 +18,22 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=1)
 
 CORS(app, supports_credentials=True)
 
-app.config["DBNAME"] = os.getenv("DBNAME")
-app.config["DBUSER"] = os.getenv("DBUSER")
-app.config["DBPASS"] = os.getenv("DBPASS")
-app.config["DBHOST"] = os.getenv("DBHOST")
-app.config["DBPORT"] = os.getenv("DBPORT")
+app.config["DB_NAME"] = os.getenv("DB_NAME")
+app.config["DB_USER"] = os.getenv("DB_USER")
+app.config["DB_PASS"] = os.getenv("DB_PASS")
+app.config["DB_HOST"] = os.getenv("DB_HOST")
+app.config["DB_PORT"] = os.getenv("DB_PORT")
 
-resend.api_key = os.getenv("RESENDAPIKEY")
-app.config["DOMAINEMAIL"] = os.getenv("DOMAINEMAIL")
-app.config["OWNEREMAIL"] = os.getenv("OWNEREMAIL")
+resend.api_key = os.getenv("RESEND_API_KEY")
+app.config["DOMAIN_EMAIL"] = os.getenv("DOMAIN_EMAIL")
+app.config["OWNER_EMAIL"] = os.getenv("OWNER_EMAIL")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
+    connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
 
     cursor.execute(
@@ -57,7 +57,7 @@ def check_date():
     data = request.get_json()
     date = data["date"]
 
-    connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
+    connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
 
     available = database.check_request_date(cursor, date)
@@ -80,7 +80,7 @@ def submit_form():
     state = data["state"]
     message = data["message"]
 
-    connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
+    connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
 
     all_fields_filled = name != "" and email != "" and phone != "" and date != "" and venue != "" and city != "" and state != ""
@@ -124,8 +124,8 @@ def submit_form():
     readable_date = date_obj.strftime("%A, %B %d, %Y")
 
     owner_params: resend.Emails.SendParams = {
-        "from": app.config["DOMAINEMAIL"],
-        "to": app.config["OWNEREMAIL"],
+        "from": app.config["DOMAIN_EMAIL"],
+        "to": app.config["OWNER_EMAIL"],
         "subject": "New Booking Request",
         "html": f"""
             <p><strong>Name: </strong>{name}</p>
@@ -142,7 +142,7 @@ def submit_form():
     r = resend.Emails.send(owner_params)
 
     recipient_params: resend.Emails.SendParams = {
-        "from": app.config["DOMAINEMAIL"],
+        "from": app.config["DOMAIN_EMAIL"],
         "to": [email],
         "subject": "We Received Your Booking Request",
         "html": f"""
@@ -188,7 +188,7 @@ def submit_login():
     email = data["email"]
     password = data["password"]
 
-    connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
+    connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
 
     user = database.check_login(cursor, email, password)
@@ -224,7 +224,7 @@ def check_login():
 @app.route("/get_bookings", methods=["GET"])
 @login_required
 def get_bookings():
-    connection = database.get_database(app.config["DBNAME"], app.config["DBUSER"], app.config["DBPASS"], app.config["DBHOST"], app.config["DBPORT"])
+    connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
 
     cursor.execute("SELECT * FROM booking_requests")
@@ -235,9 +235,9 @@ def get_bookings():
     connection.close()
     return jsonify(rows)
 
-@app.route("/logout", methods=["POST"])
+@app.route("/submit_logout", methods=["POST"])
 @login_required
-def logout():
+def submit_logout():
     logout_user()
     return jsonify({
         "success": True,
