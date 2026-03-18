@@ -22,7 +22,7 @@ def insert_request(cursor, name, email, phone, date, venue, city, state, message
 
 def check_request_date(cursor, date):
     cursor.execute(
-        """SELECT * FROM booking_requests WHERE event_date = %s;""",
+        """SELECT * FROM booking_requests WHERE event_date = %s AND (status = 'pending' OR status = 'confirmed');""",
         (date,)
     )
     requests = cursor.fetchall()
@@ -45,4 +45,34 @@ def check_login(cursor, email, password):
     if admin:
         if bcrypt.checkpw(password.encode(), admin[2].encode()):
             return admin
+    return None
+
+def get_all_requests(cursor):
+    cursor.execute("SELECT * FROM booking_requests")
+    requests = cursor.fetchall()
+
+    request_list = []
+    for request in requests:
+        request_list.append({
+            "id": request[0],
+            "name": request[1],
+            "email": request[2],
+            "phone": request[3],
+            "date": request[4].strftime("%Y-%m-%d"),
+            "venue": request[5],
+            "city": request[6],
+            "state": request[7],
+            "message": request[8],
+            "status": request[9]
+        })
+    return request_list
+
+def update_status(cursor, booking_id, status):
+    cursor.execute(
+        """UPDATE booking_requests SET status = %s WHERE id = %s RETURNING id, status""",
+        (status, booking_id,)
+    )
+    updated = cursor.fetchone()
+    if updated:
+        return updated
     return None

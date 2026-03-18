@@ -3,7 +3,8 @@ export function formatDateString(dateString: string): string {
     return "TBD";
   }
 
-  const date = new Date(dateString + "T00:00:00");
+  const [y, m, d] = dateString.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
 
   return date.toLocaleDateString("en-US", {
     year: "numeric",

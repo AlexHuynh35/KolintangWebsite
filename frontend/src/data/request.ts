@@ -1,3 +1,5 @@
+import { formatDate } from "@/utils/formatDate";
+
 export type Status = "pending" | "confirmed" | "cancelled";
 
 export interface Request {
@@ -5,7 +7,7 @@ export interface Request {
   name: string
   email: string
   phone: string
-  date: Date
+  date: string
   venue: string
   city: string
   state: string
@@ -19,7 +21,7 @@ export const placeholder: Request[] = [
     name: "string",
     email: "string",
     phone: "string",
-    date: new Date(),
+    date: formatDate(new Date()),
     venue: "string",
     city: "string",
     state: "string",
@@ -31,7 +33,7 @@ export const placeholder: Request[] = [
     name: "string",
     email: "string",
     phone: "string",
-    date: new Date(),
+    date: formatDate(new Date()),
     venue: "string",
     city: "string",
     state: "string",
@@ -43,7 +45,7 @@ export const placeholder: Request[] = [
     name: "string",
     email: "string",
     phone: "string",
-    date: new Date(),
+    date: formatDate(new Date()),
     venue: "string",
     city: "string",
     state: "string",

@@ -87,7 +87,7 @@ export async function submitLogout() {
 
 export async function getBookings() {
   const response = await fetch("/api/get_bookings", {
-    method: "GET",
+    method: "POST",
     credentials: "include"
   });
 
@@ -95,6 +95,46 @@ export async function getBookings() {
 
   if (!response.ok) {
     throw new Error(data.error || "Submission failed, please reload");
+  }
+  return data;
+}
+
+export async function confirmRequest(id: number) {
+  const response = await fetch("/api/confirm_request", {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id: id
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Submission failed, please try again");
+  }
+  return data;
+}
+
+export async function cancelRequest(id: number) {
+  const response = await fetch("/api/cancel_request", {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id: id
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Submission failed, please try again");
   }
   return data;
 }

@@ -73,6 +73,7 @@ export default function Form() {
       }))
       setDateLoading(false);
     }).catch((err) => {
+      setAvailable(false);
       setDateError(err.message);
       setDateLoading(false);
     });

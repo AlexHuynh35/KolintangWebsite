@@ -85,6 +85,7 @@ def submit_form():
 
     all_fields_filled = name != "" and email != "" and phone != "" and date != "" and venue != "" and city != "" and state != ""
     if not all_fields_filled:
+        cursor.close()
         connection.close()
         return jsonify({
             "error": "Please make sure to fill out all required fields"
@@ -92,6 +93,7 @@ def submit_form():
 
     email_valid = validation.validate_email(email)
     if not email_valid:
+        cursor.close()
         connection.close()
         return jsonify({
             "error": "Email address is not valid, please enter a valid email address"
@@ -99,6 +101,7 @@ def submit_form():
 
     phone_valid = validation.validate_phone(phone)
     if not phone_valid:
+        cursor.close()
         connection.close()
         return jsonify({
             "error": "Phone number is not valid, please enter a valid phone number"
@@ -120,57 +123,54 @@ def submit_form():
             "error": "Your request is pending, please be patient"
         }), 400
 
-    date_obj = datetime.fromisoformat(date)
-    readable_date = date_obj.strftime("%A, %B %d, %Y")
-
-    owner_params: resend.Emails.SendParams = {
-        "from": app.config["DOMAIN_EMAIL"],
-        "to": app.config["OWNER_EMAIL"],
-        "subject": "New Booking Request",
-        "html": f"""
-            <p><strong>Name: </strong>{name}</p>
-            <p><strong>Email: </strong>{email}</p>
-            <p><strong>Phone: </strong>{phone}</p>
-            <p><strong>Date: </strong>{readable_date}</p>
-            <p><strong>Venue: </strong>{venue}</p>
-            <p><strong>City: </strong>{city}</p>
-            <p><strong>State: </strong>{state}</p>
-
-            <p><strong>Message: </strong>{message}</p>
-        """
-    }
-    r = resend.Emails.send(owner_params)
-
-    recipient_params: resend.Emails.SendParams = {
-        "from": app.config["DOMAIN_EMAIL"],
-        "to": [email],
-        "subject": "We Received Your Booking Request",
-        "html": f"""
-            <p>Hi {name},</p>
-
-            <p>Thanks for submitting a booking request for <strong>{readable_date}</strong>.</p>
-
-            <p>We'll contact you soon to confirm the details.</p>
-
-            <p>Best,</p>
-            <p>Cita Lomendehe</p>
-        """
-    }
-    r = resend.Emails.send(recipient_params)
-
-    # """
+    """
     cursor.close()
     connection.close()
     return jsonify({
         "error": "Submission failed, please try again"
     }), 400
-    # """
+    """
 
     submitted = database.insert_request(cursor, name, email, phone, date, venue, city, state, message)
     if submitted:
         connection.commit()
         cursor.close()
         connection.close()
+        date_obj = datetime.fromisoformat(date)
+        readable_date = date_obj.strftime("%A, %B %d, %Y")
+        owner_params: resend.Emails.SendParams = {
+            "from": app.config["DOMAIN_EMAIL"],
+            "to": app.config["OWNER_EMAIL"],
+            "subject": "New Booking Request",
+            "html": f"""
+                <p><strong>Name: </strong>{name}</p>
+                <p><strong>Email: </strong>{email}</p>
+                <p><strong>Phone: </strong>{phone}</p>
+                <p><strong>Date: </strong>{readable_date}</p>
+                <p><strong>Venue: </strong>{venue}</p>
+                <p><strong>City: </strong>{city}</p>
+                <p><strong>State: </strong>{state}</p>
+
+                <p><strong>Message: </strong>{message}</p>
+            """
+        }
+        r = resend.Emails.send(owner_params)
+        recipient_params: resend.Emails.SendParams = {
+            "from": app.config["DOMAIN_EMAIL"],
+            "to": [email],
+            "subject": "We Received Your Booking Request",
+            "html": f"""
+                <p>Hi {name},</p>
+
+                <p>Thanks for submitting a booking request for <strong>{readable_date}</strong>.</p>
+
+                <p>We'll contact you soon to confirm the details.</p>
+
+                <p>Best,</p>
+                <p>Cita Lomendehe</p>
+            """
+        }
+        r = resend.Emails.send(recipient_params)
         return jsonify({
             "success": submitted,
             "name": name
@@ -195,14 +195,12 @@ def submit_login():
     if user:
         user_obj = User(user[0], user[1])
         login_user(user_obj)
-        connection.commit()
         cursor.close()
         connection.close()
         return jsonify({
             "success": True
         })
     else:
-        connection.commit()
         cursor.close()
         connection.close()
         return jsonify({
@@ -221,19 +219,67 @@ def check_login():
         "error": "Please log in"
     }), 401
 
-@app.route("/get_bookings", methods=["GET"])
+@app.route("/get_bookings", methods=["POST"])
 @login_required
 def get_bookings():
     connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
 
-    cursor.execute("SELECT * FROM booking_requests")
-    rows = cursor.fetchall()
+    requests = database.get_all_requests(cursor)
 
-    connection.commit()
     cursor.close()
     connection.close()
-    return jsonify(rows)
+    return jsonify(requests)
+
+@app.route("/confirm_request", methods=["PUT"])
+@login_required
+def confirm_request():
+    data = request.get_json()
+    booking_id = data["id"]
+
+    connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
+    cursor = connection.cursor()
+
+    updated = database.update_status(cursor, booking_id, "confirmed")
+    if updated:
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({
+            "success": True,
+            "status": updated[1]
+        })
+    else:
+        cursor.close()
+        connection.close()
+        return jsonify({
+            "error": "Submission failed, please try again"
+        }), 400
+
+@app.route("/cancel_request", methods=["PUT"])
+@login_required
+def cancel_request():
+    data = request.get_json()
+    booking_id = data["id"]
+
+    connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
+    cursor = connection.cursor()
+
+    updated = database.update_status(cursor, booking_id, "cancelled")
+    if updated:
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({
+            "success": True,
+            "status": updated[1]
+        })
+    else:
+        cursor.close()
+        connection.close()
+        return jsonify({
+            "error": "Submission failed, please try again"
+        }), 400
 
 @app.route("/submit_logout", methods=["POST"])
 @login_required
