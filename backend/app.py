@@ -27,6 +27,7 @@ app.config["DB_PORT"] = os.getenv("DB_PORT")
 resend.api_key = os.getenv("RESEND_API_KEY")
 app.config["DOMAIN_EMAIL"] = os.getenv("DOMAIN_EMAIL")
 app.config["OWNER_EMAIL"] = os.getenv("OWNER_EMAIL")
+app.config["SITE_URL"] = os.getenv("SITE_URL")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -150,8 +151,9 @@ def submit_form():
                 <p><strong>Venue: </strong>{venue}</p>
                 <p><strong>City: </strong>{city}</p>
                 <p><strong>State: </strong>{state}</p>
-
                 <p><strong>Message: </strong>{message}</p>
+
+                <p>Approve or deny request <a href="{app.config["SITE_URL"]}/admin/login">here</a>.</p>
             """
         }
         r = resend.Emails.send(owner_params)
@@ -162,7 +164,7 @@ def submit_form():
             "html": f"""
                 <p>Hi {name},</p>
 
-                <p>Thanks for submitting a booking request for <strong>{readable_date}</strong>.</p>
+                <p>Thank you for submitting a booking request for <strong>{readable_date}</strong>.</p>
 
                 <p>We'll contact you soon to confirm the details.</p>
 
@@ -245,9 +247,27 @@ def confirm_request():
         connection.commit()
         cursor.close()
         connection.close()
+        readable_date = updated[4].strftime("%A, %B %d, %Y")
+        recipient_params: resend.Emails.SendParams = {
+            "from": app.config["DOMAIN_EMAIL"],
+            "to": [updated[2]],
+            "subject": "Booking Request Confirmation",
+            "html": f"""
+                <p>Hi {updated[1]},</p>
+
+                <p>Thank you for your patient.</p>
+                <p>We want to inform you that your booking request for <strong>{readable_date}</strong> at <strong>{updated[5]}, {updated[6]}, {updated[7]}</strong> has been confirmed.</p>
+                
+                <p>Please email us at {app.config["OWNER_EMAIL"]} if you have any questions or would like to make changes to your booking.</p>
+
+                <p>Best,</p>
+                <p>Cita Lomendehe</p>
+            """
+        }
+        r = resend.Emails.send(recipient_params)
         return jsonify({
             "success": True,
-            "status": updated[1]
+            "status": updated[9]
         })
     else:
         cursor.close()
@@ -270,9 +290,27 @@ def cancel_request():
         connection.commit()
         cursor.close()
         connection.close()
+        readable_date = updated[4].strftime("%A, %B %d, %Y")
+        recipient_params: resend.Emails.SendParams = {
+            "from": app.config["DOMAIN_EMAIL"],
+            "to": [updated[2]],
+            "subject": "We Cannot Fulfill Your Request At This Time",
+            "html": f"""
+                <p>Hi {updated[1]},</p>
+
+                <p>Thank you for your patient.</p>
+                <p>Unfortunately, we cannot fulfill your booking request for <strong>{readable_date}</strong> at <strong>{updated[5]}, {updated[6]}, {updated[7]}</strong>.</p>
+                
+                <p>Please feel free to submit another request at our <a href="{app.config["SITE_URL"]}/book">website</a>.</p>
+                
+                <p>Best,</p>
+                <p>Cita Lomendehe</p>
+            """
+        }
+        r = resend.Emails.send(recipient_params)
         return jsonify({
             "success": True,
-            "status": updated[1]
+            "status": updated[9]
         })
     else:
         cursor.close()

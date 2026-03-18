@@ -69,7 +69,7 @@ def get_all_requests(cursor):
 
 def update_status(cursor, booking_id, status):
     cursor.execute(
-        """UPDATE booking_requests SET status = %s WHERE id = %s RETURNING id, status""",
+        """UPDATE booking_requests SET status = %s WHERE id = %s RETURNING *""",
         (status, booking_id,)
     )
     updated = cursor.fetchone()
