@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Lora } from "next/font/google";
-import { NavBar, Hero, Footer } from "@/components/index";
+import { NavBar, Hero, Footer, Clamp } from "@/components/index";
 
 const lora = Lora({ subsets: ["latin"] });
 
@@ -18,6 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lora.className} bg-white text-black`}>
+        <Clamp />
         <NavBar />
         <Hero />
         {children}

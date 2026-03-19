@@ -26,7 +26,7 @@ export default function FactCard({ title, description, imageUrl, onLeft }: FactP
           <h2 className="text-2xl md:text-3xl font-semibold text-accent-medium">{title}</h2>
           <div className="h-2 bg-accent-light rounded flex-[0.25]" />
         </div>
-        <blockquote className={`text-xl text-pretty ${onLeft ? "text-left" : "text-right"} italic text-accent-medium`}>
+        <blockquote className={`text-xl text-pretty ${onLeft ? "text-left" : "text-right"} italic text-accent-extreme`}>
           {description}
         </blockquote>
       </div>

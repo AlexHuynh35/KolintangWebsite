@@ -12,7 +12,7 @@ export default function PageTitle({ title, description }: PageTitleProps) {
       <div className="flex justify-center pb-6">
         <div className="w-9/10 h-2 bg-accent-light rounded" />
       </div>
-      <p className="font-semibold text-xl md:text-2xl text-gray-700">
+      <p className="font-semibold text-xl md:text-2xl text-accent-extreme">
         {description}
       </p>
     </div>

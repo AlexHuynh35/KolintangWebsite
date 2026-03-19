@@ -27,7 +27,7 @@ export default function EventCard({ title, description, videoUrl }: FactProps) {
           </div>
         </div>
         <div className="w-full md:w-1/2">
-          <blockquote className="text-xl text-balance text-left text-accent-medium">
+          <blockquote className="text-xl text-balance text-left text-accent-extreme">
             {description}
           </blockquote>
         </div>

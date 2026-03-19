@@ -3,10 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #000000;
-  --accent-light: #16A34A;
-  --accent-medium: #15803D;
-  --accent-dark: #166534;
-  --accent-intense: #14532D;
+  --accent-light: /*#16A34A*/ #38BDF8;
+  --accent-medium: /*#15803D*/ #0EA5E9;
+  --accent-dark: /*#166534*/ #0284C7;
+  --accent-intense: /*#14532D*/ #0369A1;
+  --accent-extreme: #075985;
 }
 
 @theme inline {
@@ -16,6 +17,7 @@
   --color-accent-medium: var(--accent-medium);
   --color-accent-dark: var(--accent-dark);
   --color-accent-intense: var(--accent-intense);
+  --color-accent-extreme: var(--accent-extreme);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,5 +1,6 @@
 export { default as NavBar } from "./nav-bar";
 export { default as Hero } from "./hero";
+export { default as Clamp } from "./clamp";
 export { default as Footer } from "./footer";
 export { default as PageTitle } from "./page-title";
 export { default as SectionTitle } from "./section-title";
