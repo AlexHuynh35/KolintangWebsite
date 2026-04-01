@@ -82,6 +82,8 @@ export default function RequestCard({ request }: RequestCardProps) {
           <p className="text-gray-800"><strong>Phone:</strong> {request.phone}</p>
           <p className="text-gray-800"><strong>Date:</strong> {formatDateString(request.date)}</p>
           <p className="text-gray-800"><strong>Location:</strong> {request.venue + ", " + request.city + ", " + request.state}</p>
+          <p className="text-gray-800"><strong>Event Type:</strong> {request.type}</p>
+          <p className="text-gray-800"><strong>Event Duration:</strong> {request.length + (request.length === 1 ? " Hour" : " Hours")}</p>
           <p className="md:col-span-2 text-gray-800"><strong>Message:</strong> {request.message}</p>
         </div>
       )}

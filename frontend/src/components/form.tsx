@@ -6,6 +6,7 @@ import { formatDate } from "@/utils/formatDate";
 import { checkDate, submitForm } from "@/utils/api";
 import { validateEmail, validatePhone } from "@/utils/validation";
 import Image from "next/image";
+import { allDurations, allEventTypes, defaultRate, EventType } from "@/data/request";
 
 export interface BookingRequest {
   name: string
@@ -15,6 +16,8 @@ export interface BookingRequest {
   venue: string
   city: string
   state: string
+  type: EventType
+  length: number
   message: string
 }
 
@@ -51,6 +54,8 @@ export default function Form() {
     venue: "",
     city: "",
     state: "",
+    type: "Other",
+    length: 0.5,
     message: ""
   })
   const [formLoading, setFormLoading] = useState<boolean>(false);
@@ -79,17 +84,17 @@ export default function Form() {
     });
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === "length" ? Number(value) : name === "type" ? (value as EventType) : value,
     }))
   }
 
   function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault();
-    
+
     if (formData.name == "") {
       setBookingError(prev => ({
         ...prev,
@@ -250,36 +255,6 @@ export default function Form() {
                 </div>
               </div>
               <div className="flex flex-row">
-                <strong className="text-xl text-accent-medium py-1">Email: </strong>
-                <div className="w-full flex flex-col">
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    onBlur={() => {
-                      if (!validateEmail(formData.email)) {
-                        setBookingError(prev => ({
-                          ...prev,
-                          email: "Enter a valid email"
-                        }));
-                      }
-                      else {
-                        setBookingError(prev => ({
-                          ...prev,
-                          email: null
-                        }));
-                      }
-                    }}
-                    className="w-full h-fit text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
-                  ></input>
-                  {bookingError.email && (
-                    <h1 className="text-md text-red-500 ml-2 p-1">{bookingError.email}</h1>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-row">
                 <strong className="text-xl text-accent-medium py-1">Phone: </strong>
                 <div className="w-full flex flex-col">
                   <input
@@ -309,6 +284,80 @@ export default function Form() {
                   )}
                 </div>
               </div>
+              <div className="flex flex-row md:col-span-2">
+                <strong className="text-xl text-accent-medium py-1">Email: </strong>
+                <div className="w-full flex flex-col">
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    onBlur={() => {
+                      if (!validateEmail(formData.email)) {
+                        setBookingError(prev => ({
+                          ...prev,
+                          email: "Enter a valid email"
+                        }));
+                      }
+                      else {
+                        setBookingError(prev => ({
+                          ...prev,
+                          email: null
+                        }));
+                      }
+                    }}
+                    className="w-full h-fit text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                  ></input>
+                  {bookingError.email && (
+                    <h1 className="text-md text-red-500 ml-2 p-1">{bookingError.email}</h1>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full flex justify-center pb-3">
+              <div className="w-9/10 h-1 bg-accent-light rounded" />
+            </div>
+
+            <h1 className="text-2xl text-accent-medium font-bold pb-6">Describe your event and get an estimated cost</h1>
+
+            <div className="w-full grid gap-6 grid-cols-1 md:grid-cols-2 pb-6">
+              <div className="flex flex-row">
+                <strong className="text-xl text-accent-medium py-1">Type: </strong>
+                <div className="w-full flex flex-col">
+                  <select
+                    name="type"
+                    required
+                    value={formData.type}
+                    onChange={handleChange}
+                    className="w-full h-fit text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                  >
+                    {allEventTypes.map((type) => (
+                      <option key={type.value} value={type.value}>{type.value}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-row">
+                <strong className="text-xl text-accent-medium py-1">Duration: </strong>
+                <div className="w-full flex flex-col">
+                  <select
+                    name="length"
+                    required
+                    value={formData.length}
+                    onChange={handleChange}
+                    className="w-full h-fit text-lg text-black border border-black bg-yellow-100 rounded-xl ml-2 p-1"
+                  >
+                    {allDurations.map((type) => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
+                <p className="text-lg text-accent-medium ml-4 py-1"> {formData.length === 1 ? "Hour" : "Hours"}</p>
+              </div>
+
               <div className="flex flex-col md:col-span-2">
                 <strong className="text-xl text-accent-medium py-1">Location: </strong>
                 <div className="flex flex-col gap-3 mt-3 ml-3">
@@ -402,13 +451,17 @@ export default function Form() {
                   </div>
                 </div>
               </div>
+
+              <div className="flex justify-center md:col-span-2">
+                <h1 className="text-xl text-accent-medium font-semibold">Your estimated cost is ${formData.length * (allEventTypes.find((type) => type.value === formData.type) ?? { value: "Other", cost: defaultRate }).cost}.</h1>
+              </div>
             </div>
 
             <div className="w-full flex justify-center pb-3">
               <div className="w-9/10 h-1 bg-accent-light rounded" />
             </div>
 
-            <h1 className="text-2xl text-accent-medium font-bold pb-6">Anything we should know about your event?</h1>
+            <h1 className="text-2xl text-accent-medium font-bold pb-6">Anything else we should know?</h1>
 
             <div className="w-full pb-6">
               <textarea

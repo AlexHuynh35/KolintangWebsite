@@ -1,5 +1,6 @@
 import psycopg2
 import resend
+import html
 import utils.database as database
 import utils.validation as validation
 from datetime import datetime, timedelta
@@ -56,7 +57,7 @@ def test_app():
 @app.route("/check_date", methods=["POST"])
 def check_date():
     data = request.get_json()
-    date = data["date"]
+    date = html.escape(data["date"])
 
     connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
@@ -72,19 +73,21 @@ def check_date():
 @app.route("/submit_form", methods=["POST"])
 def submit_form():
     data = request.get_json()
-    name = data["name"]
-    email = data["email"]
-    phone = data["phone"]
-    date = data["date"]
-    venue = data["venue"]
-    city = data["city"]
-    state = data["state"]
-    message = data["message"]
+    name = html.escape(data["name"])
+    email = html.escape(data["email"])
+    phone = html.escape(data["phone"])
+    date = html.escape(data["date"])
+    venue = html.escape(data["venue"])
+    city = html.escape(data["city"])
+    state = html.escape(data["state"])
+    event_type = html.escape(data["type"])
+    length = data["length"]
+    message = html.escape(data["message"])
 
     connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
 
-    all_fields_filled = name != "" and email != "" and phone != "" and date != "" and venue != "" and city != "" and state != ""
+    all_fields_filled = name != "" and email != "" and phone != "" and date != "" and venue != "" and city != "" and state != "" and event_type != ""
     if not all_fields_filled:
         cursor.close()
         connection.close()
@@ -116,6 +119,22 @@ def submit_form():
             "error": "Date is already booked, please pick a different date"
         }), 400
 
+    event_type_valid = event_type == "Birthday" or event_type == "Wedding" or event_type == "Performance" or event_type == "Other"
+    if not event_type_valid:
+        cursor.close()
+        connection.close()
+        return jsonify({
+            "error": "We do not perform for this kind of event, please pick a different event"
+        }), 400
+
+    length_valid = length > 0 and length <= 5
+    if not length_valid:
+        cursor.close()
+        connection.close()
+        return jsonify({
+            "error": "We only offer sessions between 30 minutes and 5 hours long, please enter a session between these times"
+        }), 400
+
     no_duplicate = database.check_request_contact(cursor, email, phone)
     if not no_duplicate:
         cursor.close()
@@ -132,11 +151,12 @@ def submit_form():
     }), 400
     """
 
-    submitted = database.insert_request(cursor, name, email, phone, date, venue, city, state, message)
+    submitted = database.insert_request(cursor, name, email, phone, date, venue, city, state, event_type, length, message)
     if submitted:
         connection.commit()
         cursor.close()
         connection.close()
+        '''
         date_obj = datetime.fromisoformat(date)
         readable_date = date_obj.strftime("%A, %B %d, %Y")
         owner_params: resend.Emails.SendParams = {
@@ -151,6 +171,8 @@ def submit_form():
                 <p><strong>Venue: </strong>{venue}</p>
                 <p><strong>City: </strong>{city}</p>
                 <p><strong>State: </strong>{state}</p>
+                <p><strong>Event Type: </strong>{event_type}</p>
+                <p><strong>Event Duration: </strong>{length}</p>
                 <p><strong>Message: </strong>{message}</p>
 
                 <p>Approve or deny request <a href="{app.config["SITE_URL"]}/admin/login">here</a>.</p>
@@ -166,13 +188,14 @@ def submit_form():
 
                 <p>Thank you for submitting a booking request for <strong>{readable_date}</strong>.</p>
 
-                <p>We'll contact you soon to confirm the details.</p>
+                <p>A member of our team will contact you soon to confirm details and discuss payment.</p>
 
                 <p>Best,</p>
                 <p>Cita Lomendehe</p>
             """
         }
         r = resend.Emails.send(recipient_params)
+        '''
         return jsonify({
             "success": submitted,
             "name": name
@@ -187,7 +210,7 @@ def submit_form():
 @app.route("/submit_login", methods=["POST"])
 def submit_login():
     data = request.get_json()
-    email = data["email"]
+    email = html.escape(data["email"])
     password = data["password"]
 
     connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
@@ -247,6 +270,7 @@ def confirm_request():
         connection.commit()
         cursor.close()
         connection.close()
+        '''
         readable_date = updated[4].strftime("%A, %B %d, %Y")
         recipient_params: resend.Emails.SendParams = {
             "from": app.config["DOMAIN_EMAIL"],
@@ -265,6 +289,7 @@ def confirm_request():
             """
         }
         r = resend.Emails.send(recipient_params)
+        '''
         return jsonify({
             "success": True,
             "status": updated[9]
@@ -290,6 +315,7 @@ def cancel_request():
         connection.commit()
         cursor.close()
         connection.close()
+        '''
         readable_date = updated[4].strftime("%A, %B %d, %Y")
         recipient_params: resend.Emails.SendParams = {
             "from": app.config["DOMAIN_EMAIL"],
@@ -308,6 +334,7 @@ def cancel_request():
             """
         }
         r = resend.Emails.send(recipient_params)
+        '''
         return jsonify({
             "success": True,
             "status": updated[9]

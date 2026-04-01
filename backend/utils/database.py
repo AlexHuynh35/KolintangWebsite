@@ -10,11 +10,11 @@ def get_database(name, user, password, host, port):
         port = port
     )
 
-def insert_request(cursor, name, email, phone, date, venue, city, state, message):
+def insert_request(cursor, name, email, phone, date, venue, city, state, event_type, length, message):
     if check_request_date(cursor, date) and check_request_contact(cursor, email, phone):
         cursor.execute(
-            """INSERT INTO booking_requests (name, email, phone, event_date, venue, city, state, message) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);""",
-            (name, email, phone, date, venue, city, state, message,)
+            """INSERT INTO booking_requests (name, email, phone, event_date, venue, city, state, event_type, length, message) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);""",
+            (name, email, phone, date, venue, city, state, event_type, length, message,)
         )
         return True
     else:
@@ -48,7 +48,7 @@ def check_login(cursor, email, password):
     return None
 
 def get_all_requests(cursor):
-    cursor.execute("SELECT * FROM booking_requests")
+    cursor.execute("SELECT id, name, email, phone, event_date, venue, city, state, event_type, length, message, status FROM booking_requests")
     requests = cursor.fetchall()
 
     request_list = []
@@ -62,8 +62,10 @@ def get_all_requests(cursor):
             "venue": request[5],
             "city": request[6],
             "state": request[7],
-            "message": request[8],
-            "status": request[9]
+            "type": request[8],
+            "length": request[9],
+            "message": request[10],
+            "status": request[11]
         })
     return request_list
 
