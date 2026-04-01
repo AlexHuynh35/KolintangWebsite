@@ -1,5 +1,10 @@
 import { BookingRequest } from "@/components/form";
 
+function getCSRFToken(): string | null {
+  const match = document.cookie.match(/csrf_token=([^;]+)/);
+  return match ? match[1] : null;
+}
+
 export async function checkDate(date: Date) {
   const response = await fetch("/api/check_date", {
     method: "POST",
@@ -72,9 +77,13 @@ export async function checkLogin() {
 }
 
 export async function submitLogout() {
+  const csrfToken = getCSRFToken();
   const response = await fetch("/api/submit_logout", {
     method: "POST",
-    credentials: "include"
+    credentials: "include",
+    headers: {
+      "X-CSRF-Token": csrfToken || "",
+    },
   })
 
   const data = await response.json();
@@ -86,9 +95,13 @@ export async function submitLogout() {
 }
 
 export async function getBookings() {
+  const csrfToken = getCSRFToken();
   const response = await fetch("/api/get_bookings", {
     method: "POST",
-    credentials: "include"
+    credentials: "include",
+    headers: {
+      "X-CSRF-Token": csrfToken || "",
+    },
   });
 
   const data = await response.json();
@@ -100,11 +113,13 @@ export async function getBookings() {
 }
 
 export async function confirmRequest(id: number) {
+  const csrfToken = getCSRFToken();
   const response = await fetch("/api/confirm_request", {
     method: "PUT",
     credentials: "include",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "X-CSRF-Token": csrfToken || "",
     },
     body: JSON.stringify({
       id: id
@@ -120,11 +135,13 @@ export async function confirmRequest(id: number) {
 }
 
 export async function cancelRequest(id: number) {
+  const csrfToken = getCSRFToken();
   const response = await fetch("/api/cancel_request", {
     method: "PUT",
     credentials: "include",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "X-CSRF-Token": csrfToken || "",
     },
     body: JSON.stringify({
       id: id

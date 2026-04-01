@@ -1,12 +1,16 @@
 import psycopg2
 import resend
 import html
+import secrets
 import utils.database as database
 import utils.validation as validation
 from datetime import datetime, timedelta
-from flask import Flask, jsonify, request
+from functools import wraps
+from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from utils.user import User
 import os
 from dotenv import load_dotenv
@@ -16,6 +20,12 @@ app = Flask(__name__)
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=1)
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+)
 
 CORS(app, supports_credentials=True)
 
@@ -29,6 +39,12 @@ resend.api_key = os.getenv("RESEND_API_KEY")
 app.config["DOMAIN_EMAIL"] = os.getenv("DOMAIN_EMAIL")
 app.config["OWNER_EMAIL"] = os.getenv("OWNER_EMAIL")
 app.config["SITE_URL"] = os.getenv("SITE_URL")
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200/day", "50/hour", "5/minute"]
+)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -50,11 +66,28 @@ def load_user(user_id):
 
     return None
 
+def csrf_protect(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        csrf_cookie = request.cookies.get("csrf_token")
+        csrf_header = request.headers.get("X-CSRF-Token")
+
+        if not csrf_cookie or not csrf_header:
+            return {"error": "Missing CSRF token"}, 403
+
+        if csrf_cookie != csrf_header:
+            return {"error": "Invalid CSRF token"}, 403
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
 @app.route("/test_app")
 def test_app():
     return "Kolintang"
 
 @app.route("/check_date", methods=["POST"])
+@limiter.limit("10/minute")
 def check_date():
     data = request.get_json()
     date = html.escape(data["date"])
@@ -71,6 +104,7 @@ def check_date():
     })
 
 @app.route("/submit_form", methods=["POST"])
+@limiter.limit("5/minute")
 def submit_form():
     data = request.get_json()
     name = html.escape(data["name"])
@@ -208,6 +242,7 @@ def submit_form():
         }), 400
 
 @app.route("/submit_login", methods=["POST"])
+@limiter.limit("5/minute")
 def submit_login():
     data = request.get_json()
     email = html.escape(data["email"])
@@ -222,9 +257,18 @@ def submit_login():
         login_user(user_obj)
         cursor.close()
         connection.close()
-        return jsonify({
+        token = secrets.token_hex(32)
+        response = make_response({
             "success": True
         })
+        response.set_cookie(
+            "csrf_token",
+            token,
+            httponly=False,
+            secure=True,
+            samesite="Lax"
+        )
+        return response
     else:
         cursor.close()
         connection.close()
@@ -246,6 +290,7 @@ def check_login():
 
 @app.route("/get_bookings", methods=["POST"])
 @login_required
+@csrf_protect
 def get_bookings():
     connection = database.get_database(app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_PASS"], app.config["DB_HOST"], app.config["DB_PORT"])
     cursor = connection.cursor()
@@ -258,6 +303,7 @@ def get_bookings():
 
 @app.route("/confirm_request", methods=["PUT"])
 @login_required
+@csrf_protect
 def confirm_request():
     data = request.get_json()
     booking_id = data["id"]
@@ -303,6 +349,7 @@ def confirm_request():
 
 @app.route("/cancel_request", methods=["PUT"])
 @login_required
+@csrf_protect
 def cancel_request():
     data = request.get_json()
     booking_id = data["id"]
@@ -348,11 +395,20 @@ def cancel_request():
 
 @app.route("/submit_logout", methods=["POST"])
 @login_required
+@csrf_protect
 def submit_logout():
     logout_user()
-    return jsonify({
-        "success": True,
+
+    response = make_response({
+        "success": True
     })
+    response.set_cookie(
+        "csrf_token",
+        "",
+        expires=0
+    )
+
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
