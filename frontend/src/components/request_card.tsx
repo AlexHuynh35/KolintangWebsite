@@ -1,3 +1,4 @@
+/*
 "use client";
 
 import { useState } from "react";
@@ -5,11 +6,14 @@ import { formatDateString } from "@/utils/formatDate";
 import { Status, Request } from "@/data/request";
 import { confirmRequest, cancelRequest } from "@/utils/api";
 
+
 type RequestCardProps = {
   request: Request;
 };
+*/
 
-export default function RequestCard({ request }: RequestCardProps) {
+export default function RequestCard(/*{ request }: RequestCardProps*/) {
+  /*
   const [isOpen, setIsOpen] = useState<boolean>(request.status == "pending");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>();
@@ -42,9 +46,11 @@ export default function RequestCard({ request }: RequestCardProps) {
       setLoading(false);
     });
   }
+  */
 
   return (
     <div className="w-full mx-auto flex flex-col items-center rounded-xl shadow">
+      {/*
       <div className={`w-full flex flex-row gap-3 p-4 rounded-t-xl ${!isOpen && "rounded-b-xl"} ${status == "pending" ? "bg-yellow-200" : status == "confirmed" ? "bg-green-200" : "bg-red-200"}`}>
         <div
           onClick={() => setIsOpen(!isOpen)}
@@ -87,6 +93,7 @@ export default function RequestCard({ request }: RequestCardProps) {
           <p className="md:col-span-2 text-gray-800"><strong>Message:</strong> {request.message}</p>
         </div>
       )}
+      */}
     </div>
   )
 }

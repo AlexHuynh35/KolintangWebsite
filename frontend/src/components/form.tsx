@@ -208,8 +208,8 @@ export default function Form() {
               <div className="w-full flex flex-row justify-center items-center gap-3">
                 <strong className="text-xl text-accent-medium">Availability: </strong>
                 <Image
-                  src={dateLoading ? "/media/icons/loading.svg" : available ? "/media/icons/check.svg" : "/media/icons/cross.svg"}
-                  alt={dateLoading ? "Checking Date" : available ? "Date Available" : "Date Not Available"}
+                  src={dateLoading ? "/media/icons/loading.svg" : available && !dateError ? "/media/icons/check.svg" : "/media/icons/cross.svg"}
+                  alt={dateLoading ? "Checking Date" : available && !dateError ? "Date Available" : "Date Not Available"}
                   width={20}
                   height={20}
                   className="object-cover rounded-full"

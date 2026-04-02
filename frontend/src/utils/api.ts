@@ -1,11 +1,14 @@
 import { BookingRequest } from "@/components/form";
 
+/*
 function getCSRFToken(): string | null {
   const match = document.cookie.match(/csrf_token=([^;]+)/);
   return match ? match[1] : null;
 }
+*/
 
 export async function checkDate(date: Date) {
+  /*
   const response = await fetch("/api/check_date", {
     method: "POST",
     headers: {
@@ -19,9 +22,14 @@ export async function checkDate(date: Date) {
     throw new Error("Submission failed, please try again");
   }
   return response.json();
+  */
+  return {
+    success: date == date
+  }
 }
 
 export async function submitForm(form: BookingRequest) {
+  /*
   const response = await fetch("/api/submit_form", {
     method: "POST",
     headers: {
@@ -39,8 +47,14 @@ export async function submitForm(form: BookingRequest) {
     throw new Error(data.error || "Submission failed, please try again");
   }
   return data;
+  */
+  return {
+    success: true,
+    name: form.name
+  }
 }
 
+/*
 export async function submitLogin(email: string, password: string) {
   const response = await fetch("/api/submit_login", {
     method: "POST",
@@ -155,3 +169,4 @@ export async function cancelRequest(id: number) {
   }
   return data;
 }
+*/

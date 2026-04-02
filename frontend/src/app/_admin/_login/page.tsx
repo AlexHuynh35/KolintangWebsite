@@ -1,11 +1,14 @@
+/*
 "use client";
 
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { submitLogin } from "@/utils/api";
 import { validateEmail } from "@/utils/validation";
+*/
 
 export default function LoginPage() {
+  /*
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [password, setPassword] = useState<string>("");
@@ -53,9 +56,11 @@ export default function LoginPage() {
       setLoading(false);
     });
   }
+  */
 
   return (
     <section className="py-6 bg-gray-100">
+      {/*
       <div className="max-w-3xl mx-auto my-6 p-6 rounded-xl shadow-sm bg-white">
         <form noValidate onSubmit={handleSubmit}>
           <div className="w-full flex flex-col justify-center items-center">
@@ -124,6 +129,7 @@ export default function LoginPage() {
           </div>
         </form>
       </div>
+      */}
     </section>
   )
 }

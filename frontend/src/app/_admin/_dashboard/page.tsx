@@ -1,3 +1,4 @@
+/*
 "use client";
 
 import { useState, useEffect } from "react";
@@ -5,8 +6,10 @@ import { useRouter } from 'next/navigation';
 import { RequestCard } from "@/components";
 import { Request } from "@/data/request";
 import { checkLogin, submitLogout, getBookings } from "@/utils/api";
+*/
 
 export default function DashboardPage() {
+  /*
   const [requests, setRequests] = useState<Request[]>([]);
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [logoutLoading, setLogoutLoading] = useState<boolean>(false);
@@ -49,9 +52,11 @@ export default function DashboardPage() {
       setLogoutLoading(false);
     });
   }
+  */
 
   return (
     <section className="py-6 bg-gray-100">
+      {/*
       {isLogin && (
         <div>
           <div className="max-w-5xl mx-auto text-center text-balance p-6">
@@ -92,6 +97,7 @@ export default function DashboardPage() {
           )}
         </div>
       )}
+      */}
     </section>
   )
 }
